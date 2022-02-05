@@ -1,0 +1,1 @@
+Deep Learning from scratch 3 책 공부
