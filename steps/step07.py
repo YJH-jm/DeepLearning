@@ -4,9 +4,9 @@ class Variable:
     def __init__(self, data):
         self.data = data
         self.grad = None
-        self.creator = None
+        self.creator = None # 이 값이 어떤 함수를 통해서 만들어졌는지 알아내기 위한 변수 
 
-    def self_creator(self, func):
+    def self_creator(self, func): 
         self.creator = func
 
     def backward(self):
@@ -18,7 +18,7 @@ class Variable:
 
 class Function:
     def __call__(self, input):
-        self.input = input # 입력 변수를 보관
+        self.input = input
         x = input.data
         y = self.forward(x)
         output = Variable(y)
@@ -78,3 +78,25 @@ if __name__ == "__main__":
     y.grad = np.array(1.0)
     y.backward()
     print(x.grad)
+
+    # assert y.creator == C
+    # assert y.creator.input == b
+    # assert y.creator.input.creator == B
+    # assert y.creator.input.creator.input == a
+    # assert y.creator.input.creator.input.creator == A
+    # assert y.creator.input.creator.input.creator.input == x
+
+
+    # y.grad = np.array(1.0)
+
+    # C = y.creator
+    # b = C.input
+    # b.grad = C.backward(y.grad)
+
+    # B = b.creator
+    # a = B.input
+    # a.grad = B.backward(b.grad)
+
+    # A = a.creator
+    # x = A.input
+    # x.grad = A.backward(a.grad)
