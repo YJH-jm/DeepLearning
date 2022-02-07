@@ -40,6 +40,6 @@ def f(x):
 if __name__ == "__main__":
     # f = Square()
     x = Variable(np.array(0.5))
-    dy = numerical_diff(f, x)
+    dy = numerical_diff(f, x) # python에서는 함수도 객체이기 때문에 다른 함수에 인수로 전달 가능
     
     print(dy)
