@@ -18,11 +18,11 @@ class Square(Function):
     def forward(self, x):
         return x ** 2
 
-class Exp(Function):
+class Exp(Function): 
     def forward(self, x):
         return np.exp(x)
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     A = Square()
     B = Exp()
     C = Square()
@@ -32,4 +32,4 @@ if __name__ == "__main__":
     b = B(a)
     y = C(b)
 
-    print(y.data)
+    print(y.data) # 합성함수의 forward 계산
