@@ -10,7 +10,7 @@ class Variable:
         self.grad = None
         self.creator = None
 
-    def self_creator(self, func):
+    def set_creator(self, func):
         self.creator = func
 
     def backward(self):
@@ -28,7 +28,7 @@ class Variable:
 
 
 def as_array(x): # input이 0차원 ndarray인 경우에는 연산 결과가 np.float 발생 가능 
-    if np.isscaler(x):
+    if np.isscalar(x):
         return np.array(x)
     return x
 
@@ -38,7 +38,7 @@ class Function:
         x = input.data
         y = self.forward(x)
         output = Variable(as_array(y)) # y가 scaler인 경우 ndarray 형태로 변환
-        output.self_creator(self) 
+        output.set_creator(self) 
         self.output = output
         return output
 
