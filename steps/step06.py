@@ -3,11 +3,11 @@ import numpy as np
 class Variable:
     def __init__(self, data):
         self.data = data
-        self.grad = None
+        self.grad = None # 역전파를 하여 얻어진 미분값의 결과를 저장하기 위한 변수 
 
 class Function:
     def __call__(self, input):
-        self.input = input # 입력 변수를 보관
+        self.input = input # 역전파 계산을 위해 필요한 입력 변수를 보관
         x = input.data
         y = self.forward(x)
         output = Variable(y)
@@ -52,9 +52,19 @@ def f(x):
 
     return C(B(A(x)))
 
-if __name__ == "__main__":
-    # f = Square()
+if __name__ == "__main__": 
+    A = Square()
+    B = Exp()
+    C = Square()
+
     x = Variable(np.array(0.5))
-    dy = numerical_diff(f, x)
-    
-    print(dy)
+    a = A(x)
+    b = B(a)
+    y = C(b)
+
+    y.grad = np.array(1.0)
+    b.grad = C.backward(y.grad)
+    a.grad = B.backward(b.grad)
+    x.grad = A.backward(a.grad)
+
+    print(x.grad)
