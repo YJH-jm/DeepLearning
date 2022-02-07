@@ -14,7 +14,7 @@ class Variable:
         while funcs:
             f = funcs.pop() # 함수롤 가지고 옴
             x, y = f.input, f.output
-            x.grad = f.backward(y.grad)
+            x.grad = f.backward(y.grad) 
 
             if x.creator is not None:
                 funcs.append(x.creator)
