@@ -26,14 +26,14 @@ class Variable:
             if x.creator is not None:
                 funcs.append(x.creator)
 
-
 def as_array(x): 
     if np.isscalar(x):
         return np.array(x)
     return x
 
 class Function:
-    def __call__(self, *inputs): # 임의 개수의 인수 (가변 길이 인수)를 건네 받아 호출 가능 
+    def __call__(self, *inputs): # 임의 개수의 인수 (가변 길이 인수)를 건네 받아 호출 가능, 가변 인수는 tuple 형식으로 전달
+        # print("확인 : ", type(inputs)) # <class 'tuple'>
         xs = [x.data for x in inputs]
         ys = self.forward(*xs) # 리스트의 원소를 낱개로 풀어서 전송
 
@@ -45,7 +45,7 @@ class Function:
         for output in outputs:
             output.set_creator(self)
         
-        self.inputs = inputs
+        self.inputs = inputs 
         self.outputs = outputs
         
         return outputs if len(outputs) > 1 else  outputs[0] # list의 원소가 하나라면 리스트 말고 그 원소만 반환
@@ -92,20 +92,6 @@ def exp(x):
 def add(x0, x1): # add 함수 구현 
     return Add()(x0,x1)
 
-def numerical_diff(f, x, eps = 1e-4):
-    x0 = Variable(x.data - eps)
-    x1 = Variable(x.data + eps)
-    y0 = f(x0)
-    y1 = f(x1)
-
-    return (y1.data - y0.data) / (2 * eps)
-
-def f(x):
-    A = Square()
-    B = Exp()
-    C = Square()
-
-    return C(B(A(x)))
 
 if __name__ == "__main__":
     x0 = Variable(np.array(2))
