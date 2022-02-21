@@ -29,16 +29,15 @@ class Variable:
             for x, gx in zip(f.inputs, gxs):
                 if x.grad is None:
                     x.grad = gx
-                    print("확인 : " ,x.grad)
 
                 else:
-                    x.grad = x.grad+gx                
+                    x.grad = x.grad + gx                
                 
                 if x.creator is not None:
                     funcs.append(x.creator)
 
     
-    def cleargrad(self):
+    def cleargrad(self): # 변수 재사용시 
         self.grad = None
 
 
@@ -49,6 +48,7 @@ def as_array(x):
 
 class Function:
     def __call__(self, *inputs): # 임의 개수의 인수 (가변 길이 인수)를 건네 받아 호출 가능 
+        # print("확인 : ", type(inputs)) # <class 'tuple'>
         xs = [x.data for x in inputs]
         ys = self.forward(*xs) # 리스트의 원소를 낱개로 풀어서 전송
 
@@ -80,6 +80,11 @@ class Square(Function):
         gx = 2 * x * gy
         return gx
 
+def square(x): 
+    f = Square()
+    return f(x)
+
+
 class Exp(Function):
     def forward(self, x):
         return np.exp(x)
@@ -89,6 +94,8 @@ class Exp(Function):
         gx = np.exp(x) * gy
         return gx
 
+def exp(x): 
+    return Exp()(x)
 
 class Add(Function):
     def forward(self, x0, x1):
@@ -99,31 +106,9 @@ class Add(Function):
     def backward(self,gy):
         return gy, gy
 
-def square(x): 
-    f = Square()
-    return f(x)
-
-def exp(x): 
-    return Exp()(x)
-
-
 def add(x0, x1): # add 함수 구현 
     return Add()(x0,x1)
 
-def numerical_diff(f, x, eps = 1e-4):
-    x0 = Variable(x.data - eps)
-    x1 = Variable(x.data + eps)
-    y0 = f(x0)
-    y1 = f(x1)
-
-    return (y1.data - y0.data) / (2 * eps)
-
-def f(x):
-    A = Square()
-    B = Exp()
-    C = Square()
-
-    return C(B(A(x)))
 
 if __name__ == "__main__":
     x = Variable(np.array(3.0))
@@ -131,8 +116,8 @@ if __name__ == "__main__":
     y.backward()
     print(x.grad)
 
-
     x.cleargrad()
+
     y = add(add(x, x), x)
     y.backward()
     print(x.grad)
