@@ -1,5 +1,5 @@
 import numpy as np
-import weakref
+import weakref # 순환참조를 막기 위한 python 모듈 
 
 class Variable:
     def __init__(self, data):
@@ -20,8 +20,6 @@ class Variable:
         if self.grad is None: 
             self.grad = np.ones_like(self.data)
 
-
-        # funcs = [self.creator]
         funcs = []
         seen_set = set()
 
@@ -93,10 +91,14 @@ class Square(Function):
     def forward(self, x):
         return x ** 2
     
-    def backward(self, gy):
+    def backward(self, gy): 
         x = self.inputs[0].data
         gx = 2 * x * gy
         return gx
+
+def square(x): 
+    f = Square()
+    return f(x)
 
 class Exp(Function):
     def forward(self, x):
@@ -107,6 +109,8 @@ class Exp(Function):
         gx = np.exp(x) * gy
         return gx
 
+def exp(x): 
+    return Exp()(x)
 
 class Add(Function):
     def forward(self, x0, x1):
@@ -116,14 +120,6 @@ class Add(Function):
     
     def backward(self,gy):
         return gy, gy
-
-def square(x): 
-    f = Square()
-    return f(x)
-
-def exp(x): 
-    return Exp()(x)
-
 
 def add(x0, x1): # add 함수 구현 
     return Add()(x0,x1)
