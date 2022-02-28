@@ -1,18 +1,19 @@
 import numpy as np
 import weakref
-import contextlib
+import contextlib # with 문이 수반되는 일반적인 작업을 위한 유틸리티를 제공하는 모듈
 
 
 class Config:
     enable_backprop = True
 
 
-@contextlib.contextmanager
+@contextlib.contextmanager # 직접 작성한 함수를 with문에서 쉽게 사용
 def using_config(name, value):
     old_value = getattr(Config, name)
     setattr(Config, name, value)
     try:
-        yield
+        yield # yield 이후 전처리 logic, yield 이후 후처리 logic 작성
+        # with block 안으로 들어갈 때 전처리가 실행, 빠져나오고 후처리가 실행
     finally:
         setattr(Config, name, old_value)
 
@@ -79,6 +80,10 @@ class Variable:
         self.grad = None
 
     @property
+    def shape(self):
+        return self.data.shape
+
+    @property
     def ndim(self):
         return self.data.ndim
 
@@ -100,6 +105,7 @@ class Variable:
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
 
+    # Variable.__mul__ = mul 과 같은 의미
     # def __mul__(self, other):
     #     return mul(self, other)
 
@@ -147,6 +153,10 @@ class Square(Function):
         gx = 2 * x * gy
         return gx
 
+def square(x): 
+    f = Square()
+    return f(x)
+
 class Exp(Function):
     def forward(self, x):
         return np.exp(x)
@@ -156,6 +166,8 @@ class Exp(Function):
         gx = np.exp(x) * gy
         return gx
 
+def exp(x): 
+    return Exp()(x)
 
 class Add(Function):
     def forward(self, x0, x1):
@@ -166,6 +178,9 @@ class Add(Function):
     def backward(self,gy):
         return gy, gy
 
+def add(x0, x1): # add 함수 구현 
+    return Add()(x0,x1)
+
 class Mul(Function):
     def forward(self, x0, x1):
         return x0 * x1
@@ -174,18 +189,9 @@ class Mul(Function):
         x0, x1 = self.inputs[0].data, self.inputs[1].data
         return gy*x1, gy*x0 
 
-def square(x): 
-    f = Square()
-    return f(x)
-
-def exp(x): 
-    return Exp()(x)
-
 def mul(x0, x1):
     return Mul()(x0, x1)
 
-def add(x0, x1): # add 함수 구현 
-    return Add()(x0,x1)
 
 
 Variable.__add__ = add
