@@ -1,18 +1,19 @@
 import numpy as np
 import weakref
-import contextlib
+import contextlib # with 문이 수반되는 일반적인 작업을 위한 유틸리티를 제공하는 모듈
 
 
 class Config:
     enable_backprop = True
 
 
-@contextlib.contextmanager
+@contextlib.contextmanager # 직접 작성한 함수를 with문에서 쉽게 사용
 def using_config(name, value):
     old_value = getattr(Config, name)
     setattr(Config, name, value)
     try:
-        yield
+        yield # yield 이후 전처리 logic, yield 이후 후처리 logic 작성
+        # with block 안으로 들어갈 때 전처리가 실행, 빠져나오고 후처리가 실행
     finally:
         setattr(Config, name, old_value)
 
@@ -78,6 +79,11 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
+
+    @property
+    def shape(self):
+        return self.data.shape
+        
     @property
     def ndim(self):
         return self.data.ndim
@@ -108,6 +114,7 @@ def as_array(x):
 
 class Function:
     def __call__(self, *inputs): # 임의 개수의 인수 (가변 길이 인수)를 건네 받아 호출 가능 
+        # print("확인 : ", type(inputs)) # <class 'tuple'>
         xs = [x.data for x in inputs]
         ys = self.forward(*xs) # 리스트의 원소를 낱개로 풀어서 전송
 
