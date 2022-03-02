@@ -102,10 +102,6 @@ class Variable:
         
         return 'variable(' + p + ')' 
 
-    def __mul__(self, other):
-        return mul(self, other)
-
-
 
 def as_array(x): 
     if np.isscalar(x):
@@ -256,6 +252,7 @@ class Pow(Function):
         x = self.inputs[0].data
         c = self.c
         gx = c * x**(c-1) * gy
+        return gx
 
 def pow(x, c):
     return Pow(c)(x)
@@ -271,7 +268,3 @@ Variable.__truediv__ = div
 Variable.__rtruediv__ = rdiv
 Variable.__pow__ = pow
 
-if __name__ == "__main__":
-    x = Variable(np.array(2.0))
-    y = x ** 3
-    print(y)

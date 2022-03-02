@@ -108,8 +108,6 @@ class Variable:
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
 
-    # def __mul__(self, other):
-    #     return mul(self, other)
 
 def as_variable(obj):
     if isinstance(obj, Variable):
@@ -206,3 +204,8 @@ Variable.__radd__ = add
 Variable.__mul__ = mul
 Variable.__rmul__ = mul
 
+if __name__ == "__main__":
+    x = Variable(np.array(2.0))
+    y = x + 3
+    print(y)
+    print(y.backward())
